@@ -23,8 +23,6 @@ Plug 'chromium/vim-codesearch'
 
 Plug 'tikhomirov/vim-glsl'
 
-let g:codesearch_source_root = '/home/yucwang/ruby/src/'
-
 " All of your Plugins must be added before the following line
 call plug#end()            " required
 filetype plugin indent on    " required
@@ -74,6 +72,11 @@ filetype plugin indent on
 :inoremap ' ''<ESC>i
 :inoremap ` ``<ESC>i
 :inoremap <c-v> <shift-insert>
+
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
+inoremap <silent><expr> <TAB> coc#pum#visible() ? coc#pum#next(1) : "\<TAB>"
+inoremap <silent><expr> <S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<S-TAB>"
+
  
 "find the closest pair in the same line"
 function ClosePair(char)
@@ -99,88 +102,31 @@ map <C-l> :NERDTree<CR>
 map tl :Tlist<CR><c-l>
  
  
-func! CompileCode()
-        exec "w"
-        if &filetype == "c"
-            exec "!gcc -Wall  -g %<.c -o %<"
-        elseif &filetype == "cpp"
-            exec "!g++ -Wall  -g %<.cpp -o %<"
-        elseif &filetype == "cc"
-            exec "!g++ -Wall  -g %<.cc -o %<"
-        elseif &filetype == "java"
-            exec "!javac %<.java"
-        elseif &filetype == "haskell"
-            exec "!ghc --make %<.hs -o %<"
-        elseif &filetype == "lua"
-            exec "!lua %<.lua"
-        elseif &filetype == "perl"
-            exec "!perl %<.pl"
-        elseif &filetype == "python"
-            exec "!python %<.py"
-        elseif &filetype == "ruby"
-            exec "!ruby %<.rb"
-        elseif &filetype == "cs"
-            exec "!mcs %<.cs -debug"
-        endif
-endfunc
- 
-func! RunCode()
-        exec "w"
-        if &filetype == "c" || &filetype == "cpp" || &filetype == "haskell"
-            exec "! %<.exe"
-        elseif &filetype == "java"
-            exec "!java %<"
-        elseif &filetype == "lua"
-            exec "!lua %<.lua"
-        elseif &filetype == "perl"
-            exec "!perl %<.pl"
-        elseif &filetype == "python"
-            exec "!python %<.py"
-        elseif &filetype == "ruby"
-            exec "!ruby %<.rb"
-        endif
-endfunc
- 
-map <c-c> :call CompileCode()<CR>
-imap <c-c> <ESC>:call CompileCode()<CR>
-vmap <c-c> <ESC>:call CompileCode()<CR>
- 
-map <c-r> :call RunCode()<CR>
-imap <c-r> <ESC>:call RunCode()<CR>
-vmap <c-r> <ESC>:call RunCode()<CR>
 
-autocmd BufNewFile *.cpp,*.[ch],*.sh,*.java,*.swift,*.cs exec ":call SetTitle()"
+autocmd BufNewFile *.cpp,*.[ch],*.sh,*.java,*.swift,*.cs,*.py,*.rs exec ":call SetTitle()"
 
-func SetTitle() 
-    if &filetype == 'sh' 
-        call setline(1,"\#########################################################################") 
-        call append(line("."), "\# File Name: ".expand("%")) 
-        call append(line(".")+1, "\# Author: Yuchen Wang") 
-        call append(line(".")+2, "\# mail: wyc8094@gmail.com") 
-        call append(line(".")+3, "\# Created Time: ".strftime("%c")) 
-        call append(line(".")+4, "\#########################################################################") 
-        call append(line(".")+5, "\#!/bin/bash") 
-        call append(line(".")+6, "") 
-    else 
-        call setline(1, "/*************************************************************************") 
-        call append(line("."), "    > File Name: ".expand("%")) 
-        call append(line(".")+1, "    > Author: Yuchen Wang") 
-        call append(line(".")+2, "    > Mail: wyc8094@gmail.com ") 
-        call append(line(".")+3, "    > Created Time: ".strftime("%c")) 
-        call append(line(".")+4, " ************************************************************************/") 
-        call append(line(".")+5, "")
+func SetTitle()
+    if &filetype == 'sh'
+        call setline(1, "\#!/bin/bash")
+        call append(line("."), "")
+    elseif &filetype == 'python'
+        call setline(1, "\# Copyright @yucwang ".strftime("%Y"))
+        call append(line("."), "")
+    else
+        call setline(1, "// Copyright @yucwang ".strftime("%Y"))
+        call append(line("."), "")
     endif
     if &filetype == 'cpp' || &filetype == 'cc'
-        call append(line(".")+6, "#include<iostream>")
-        call append(line(".")+7, "using namespace std;")
-        call append(line(".")+8, "")
+        call append(line(".")+1, "#include<iostream>")
+        call append(line(".")+2, "using namespace std;")
+        call append(line(".")+3, "")
     endif
     if &filetype == 'c'
-        call append(line(".")+6, "#include<stdio.h>")
-        call append(line(".")+7, "")
+        call append(line(".")+1, "#include<stdio.h>")
+        call append(line(".")+2, "")
     endif
     autocmd BufNewFile * normal G
-endfunc 
+endfunc
 
 autocmd FileType python set omnifunc=pythoncomplete#Complete  
 autocmd FileType javascrīpt set omnifunc=javascrīptcomplete#CompleteJS  
