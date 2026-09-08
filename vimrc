@@ -28,7 +28,7 @@ call plug#end()            " required
 filetype plugin indent on    " required
 
 "Some basic settings"
-set guifont=Monaco:h14
+set guifont=Monaco:h18
 "Do not use tab in vim editting"
 set expandtab
 set tabstop=2
@@ -100,8 +100,6 @@ map <C-l> :NERDTree<CR>
  
 " tl                 
 map tl :Tlist<CR><c-l>
- 
- 
 
 autocmd BufNewFile *.cpp,*.[ch],*.sh,*.java,*.swift,*.cs,*.py,*.rs exec ":call SetTitle()"
 
@@ -137,4 +135,3 @@ autocmd FileType php set omnifunc=phpcomplete#CompletePHP
 autocmd FileType c set omnifunc=ccomplete#Complete 
 
 autocmd BufEnter *tex set sw =2
-let g:tex_flavor ='latex'
